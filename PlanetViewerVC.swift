@@ -26,8 +26,7 @@ class PlanetViewerVC: UIViewController, ARSCNViewDelegate {
         addBaseNode()
         addPlanet()
         addText()
-
-//        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        addShip()
 
     }
     
@@ -69,6 +68,31 @@ class PlanetViewerVC: UIViewController, ARSCNViewDelegate {
         let midpoint = -((max - min) / 2 + min) * Float(scaleFactor)
         textNode.position = SCNVector3(midpoint, 0.35, 0)
         baseNode.addChildNode(textNode)
+    }
+
+    func addShip() {
+        let orbitAction = SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 6)
+        let repeatOrbit = SCNAction.repeatForever(orbitAction)
+
+        let shipUpAction = SCNAction.move(to: SCNVector3(-0.35, 0.2, 0), duration: 2)
+        shipUpAction.timingMode = .easeInEaseOut
+        let shipDownAction = SCNAction.move(to: SCNVector3(-0.35, -0.2, 0), duration: 2)
+        shipDownAction.timingMode = .easeInEaseOut
+        let upDown = SCNAction.sequence([shipUpAction, shipDownAction])
+        let repeatUpDown = SCNAction.repeatForever(upDown)
+
+
+        let scene = SCNScene(named: "art.scnassets/ship.scn")
+        if let shipNode = scene?.rootNode.childNode(withName: "ship", recursively: true ) {
+            shipNode.scale = SCNVector3(0.2, 0.2, 0.2)
+            shipNode.position = SCNVector3(-0.35, 0, 0)
+            let rotateNode = SCNNode()
+            baseNode.addChildNode(rotateNode)
+            rotateNode.addChildNode(shipNode)
+            rotateNode.runAction(repeatOrbit)
+            shipNode.runAction(repeatUpDown)
+
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
