@@ -25,6 +25,7 @@ class PlanetViewerVC: UIViewController, ARSCNViewDelegate {
 
         addBaseNode()
         addPlanet()
+        addText()
 
 //        let scene = SCNScene(named: "art.scnassets/ship.scn")!
 
@@ -37,7 +38,7 @@ class PlanetViewerVC: UIViewController, ARSCNViewDelegate {
     }
 
     func addBaseNode() {
-        let baseLocation = SCNVector3(0.0, 0.0, -1.0)
+        let baseLocation = SCNVector3(0.0, 0.0, -1.5)
         baseNode.position = baseLocation
         sceneView.scene.rootNode.addChildNode(baseNode)
     }
@@ -54,6 +55,20 @@ class PlanetViewerVC: UIViewController, ARSCNViewDelegate {
         let repeatRotation = SCNAction.repeatForever(planetRotate)
         planetNode.runAction(repeatRotation )
 
+    }
+
+    func addText() {
+        let text = SCNText(string: planetName.capitalized, extrusionDepth: 1)
+        text.font = UIFont(name: "futura", size: 16)
+        text.flatness = 0
+        let scaleFactor = 0.1 / text.font.pointSize
+        textNode.scale = SCNVector3(scaleFactor, scaleFactor, scaleFactor)
+        textNode.geometry = text
+        let max = textNode.boundingBox.max.x
+        let min = textNode.boundingBox.min.x
+        let midpoint = -((max - min) / 2 + min) * Float(scaleFactor)
+        textNode.position = SCNVector3(midpoint, 0.35, 0)
+        baseNode.addChildNode(textNode)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
